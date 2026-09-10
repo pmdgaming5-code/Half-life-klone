@@ -1,13 +1,14 @@
 {
   "name": "resonance-blacksite",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite --guest 0.0.0.0",
+    "dev": "vite --host 0.0.0.0",
     "build": "vite build",
     "preview": "vite preview --host 0.0.0.0",
-    "check": "node --check src/main.js"
+    "check": "node --check src/main.js",
+    "runtime-smoke": "node scripts/runtime-smoke.js"
   },
   "dependencies": {
     "@capacitor/android": "^7.4.3",
@@ -16,6 +17,7 @@
   },
   "devDependencies": {
     "@capacitor/cli": "^7.4.3",
-    "vite": "^7.1.5"
+    "vite": "^7.1.5",
+    "playwright": "^1.55.0"
   }
 }
