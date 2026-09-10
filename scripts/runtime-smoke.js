@@ -1,22 +1,28 @@
 import { spawn } from 'node:child_process';
 import { chromium } from 'playwright';
+import http from 'node:http';
 
-const vite=spawn('npm',['run','preview','--','--port','4173'],{stdio:['ignore','pipe','pipe'],shell:process.platform==='win32'});
+const viteScript=new URL('../node_modules/vite/bin/vite.js',import.meta.url).pathname;
+const vite=spawn(process.execPath,[viteScript,'preview','--host','127.0.0.1','--port','4173'],{stdio:['ignore','pipe','pipe']});
 let output='';
 vite.stdout.on('data',d=>output+=d.toString());
 vite.stderr.on('data',d=>output+=d.toString());
 
-const stopVite=()=>{try{vite.kill('SIGTERM')}catch{}};
+const stopVite=()=>{if(vite.exitCode===null)try{vite.kill('SIGTERM')}catch{}};
 process.on('exit',stopVite);
 let browser=null;
 
-try{
-  await new Promise((resolve,reject)=>{
-    const timer=setTimeout(()=>reject(new Error(`Vite preview did not start. ${output}`)),15000);
-    const check=()=>output.includes('4173')?(clearTimeout(timer),resolve()):setTimeout(check,100);
-    check();
-  });
+async function waitForServer(){
+  const deadline=Date.now()+15000;
+  while(Date.now()<deadline){
+    try{await new Promise((resolve,reject)=>{const r=http.get('http://127.0.0.1:4173/',res=>{res.resume();res.statusCode===200?resolve():reject(new Error(`HTTP ${res.statusCode}`));});r.on('error',reject);r.setTimeout(1000,()=>{r.destroy();reject(new Error('timeout'))});});return;}
+    catch{await new Promise(r=>setTimeout(r,100));}
+  }
+  throw new Error(`Vite preview did not start. ${output}`);
+}
 
+try{
+  await waitForServer();
   browser=await chromium.launch({headless:true,args:['--use-gl=swiftshader','--disable-gpu-sandbox']});
   const page=await browser.newPage({viewport:{width:1280,height:720}});
   const errors=[];
@@ -26,7 +32,6 @@ try{
   await page.waitForFunction(()=>document.getElementById('menu')?.classList.contains('hidden')===false,{timeout:8000});
   if(document.querySelector('#boot')) throw new Error('Boot screen still exists after startup.');
   if(errors.length) throw new Error(`Browser errors: ${errors.join(' | ')}`);
-  await page.screenshot({path:'runtime-smoke.png'});
   console.log('Runtime smoke test passed: boot completed and menu is visible.');
 }finally{
   if(browser) await browser.close().catch(()=>{});
