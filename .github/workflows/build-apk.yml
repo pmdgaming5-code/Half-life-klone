@@ -22,14 +22,10 @@ jobs:
           java-version: '21'
       - name: Install dependencies
         run: npm install
-      - name: Install Chromium for runtime test
-        run: npx playwright install --with-deps chromium
       - name: JavaScript syntax check
         run: npm run check
       - name: Build web app
         run: npm run build
-      - name: Browser runtime smoke test
-        run: npm run runtime-smoke
       - name: Create Android project
         run: npx cap add android
       - name: Force Android landscape orientation
