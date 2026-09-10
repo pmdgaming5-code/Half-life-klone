@@ -22,19 +22,27 @@ jobs:
           java-version: '21'
       - name: Install dependencies
         run: npm install
+      - name: Install Chromium for runtime test
+        run: npx playwright install --with-deps chromium
       - name: JavaScript syntax check
         run: npm run check
       - name: Build web app
         run: npm run build
+      - name: Browser runtime smoke test
+        run: npm run runtime-smoke
       - name: Create Android project
         run: npx cap add android
+      - name: Force Android landscape orientation
+        run: node scripts/patch-android.js
       - name: Sync Android project
         run: npx cap sync android
       - name: Assemble debug APK
         working-directory: android
         run: ./gradlew assembleDebug --no-daemon --stacktrace
-      - name: Smoke-check APK
-        run: test -s android/app/build/outputs/apk/debug/app-debug.apk
+      - name: Verify APK and landscape manifest
+        run: |
+          test -s android/app/build/outputs/apk/debug/app-debug.apk
+          grep -q 'android:screenOrientation="landscape"' android/app/src/main/AndroidManifest.xml
       - name: Upload APK
         uses: actions/upload-artifact@v4.6.2
         with:
