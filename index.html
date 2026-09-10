@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
+  <meta name="theme-color" content="#071016" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <title>Resonance Blacksite</title>
+</head>
+<body>
+  <div id="app">
+    <div id="boot" class="screen active">
+      <div class="boot-panel">
+        <div class="boot-mark">RB</div>
+        <div class="boot-title">RESONANCE BLACKSITE</div>
+        <div class="boot-subtitle">FIRST-PERSON TEST BUILD</div>
+        <div class="boot-progress"><span id="boot-progress-fill"></span></div>
+        <div id="boot-text">INITIALIZING RENDERER...</div>
+      </div>
+    </div>
+
+    <div id="menu" class="screen hidden">
+      <div class="menu-panel">
+        <div class="eyebrow">COPPERBARS LABS // INTERNAL TEST</div>
+        <h1>RESONANCE<br><span>BLACKSITE</span></h1>
+        <p class="menu-copy">A compact, original first-person science-fiction campaign built with HTML, JavaScript and Three.js.</p>
+        <button id="start-btn" class="menu-btn">START TEST</button>
+        <button id="help-btn" class="menu-btn ghost">CONTROLS</button>
+        <div class="menu-note">Keyboard + mouse on desktop. Dual-stick touch controls on mobile.</div>
+      </div>
+    </div>
+
+    <div id="game-ui" class="hidden">
+      <canvas id="game"></canvas>
+      <div id="vignette"></div>
+      <div id="crosshair"><i></i><i></i><i></i><i></i><b></b></div>
+      <div id="hud-top">
+        <div class="hud-block">SUIT <span id="suit-value">100</span></div>
+        <div class="hud-block">SECTOR <span id="sector-value">01</span></div>
+      </div>
+      <div id="hud-bottom">
+        <div class="health-block"><small>HP</small><strong id="hp-value">100</strong></div>
+        <div class="ammo-block"><div><span id="weapon-name">SIDEARM</span></div><strong id="ammo-value">12 / 48</strong></div>
+      </div>
+      <div id="objective"></div>
+      <div id="prompt"></div>
+      <div id="hitmarker">×</div>
+      <div id="damage-flash"></div>
+      <div id="mobile-controls" class="hidden">
+        <div id="left-stick" class="stick"><span></span></div>
+        <div id="right-stick" class="stick"><span></span></div>
+        <button id="mobile-fire" class="touch-btn fire">FIRE</button>
+        <button id="mobile-jump" class="touch-btn">JUMP</button>
+        <button id="mobile-reload" class="touch-btn">R</button>
+        <button id="mobile-use" class="touch-btn">USE</button>
+      </div>
+      <div id="pause-overlay" class="hidden">
+        <div class="pause-panel"><h2>PAUSED</h2><p>Press ESC or tap resume.</p><button id="resume-btn" class="menu-btn">RESUME</button></div>
+      </div>
+      <div id="end-overlay" class="hidden">
+        <div class="end-panel"><div id="end-title">TEST COMPLETE</div><p id="end-copy"></p><button id="restart-btn" class="menu-btn">RUN AGAIN</button></div>
+      </div>
+      <div id="help-overlay" class="hidden">
+        <div class="help-panel"><h2>CONTROLS</h2><p><b>WASD</b> Move &nbsp; <b>SHIFT</b> Sprint &nbsp; <b>SPACE</b> Jump</p><p><b>MOUSE</b> Look &nbsp; <b>LMB</b> Fire &nbsp; <b>R</b> Reload &nbsp; <b>E</b> Use</p><p><b>1 / 2</b> Weapon slot &nbsp; <b>ESC</b> Pause</p><button id="close-help" class="menu-btn">BACK</button></div>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

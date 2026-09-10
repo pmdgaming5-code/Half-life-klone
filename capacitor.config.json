@@ -1,0 +1,9 @@
+{
+  "appId": "com.copperbars.resonanceblacksite",
+  "appName": "Resonance Blacksite",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  }
+}
