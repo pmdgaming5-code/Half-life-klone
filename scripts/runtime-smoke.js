@@ -8,9 +8,9 @@ let output='';
 vite.stdout.on('data',d=>output+=d.toString());
 vite.stderr.on('data',d=>output+=d.toString());
 
-const stopVite=()=>{if(vite.exitCode===null)try{vite.kill('SIGTERM')}catch{}};
-process.on('exit',stopVite);
+const stopVite=()=>{if(vite.exitCode===null)try{vite.kill('SIGKILL')}catch{}};
 let browser=null;
+const watchdog=setTimeout(()=>{console.error('Runtime smoke test timed out.');stopVite();process.exit(1)},30000);
 
 async function waitForServer(){
   const deadline=Date.now()+15000;
@@ -23,17 +23,24 @@ async function waitForServer(){
 
 try{
   await waitForServer();
-  browser=await chromium.launch({headless:true,args:['--use-gl=swiftshader','--disable-gpu-sandbox']});
+  browser=await chromium.launch({headless:true,timeout:10000,args:['--use-gl=swiftshader','--disable-gpu-sandbox']});
   const page=await browser.newPage({viewport:{width:1280,height:720}});
   const errors=[];
   page.on('pageerror',e=>errors.push(e.message));
   page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
   await page.goto('http://127.0.0.1:4173/',{waitUntil:'domcontentloaded',timeout:10000});
   await page.waitForFunction(()=>document.getElementById('menu')?.classList.contains('hidden')===false,{timeout:8000});
-  if(document.querySelector('#boot')) throw new Error('Boot screen still exists after startup.');
-  if(errors.length) throw new Error(`Browser errors: ${errors.join(' | ')}`);
+  const bootExists=await page.locator('#boot').count();
+  if(bootExists)throw new Error('Boot screen still exists after startup.');
+  if(errors.length)throw new Error(`Browser errors: ${errors.join(' | ')}`);
   console.log('Runtime smoke test passed: boot completed and menu is visible.');
-}finally{
-  if(browser) await browser.close().catch(()=>{});
+  clearTimeout(watchdog);
   stopVite();
+  process.exit(0);
+}catch(error){
+  console.error(error?.stack||error);
+  clearTimeout(watchdog);
+  if(browser)await browser.close().catch(()=>{});
+  stopVite();
+  process.exit(1);
 }
