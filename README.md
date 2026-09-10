@@ -1,30 +1,31 @@
 # Resonance Blacksite
 
-A browser-first / Android first-person sci-fi test game built with **HTML, CSS, JavaScript and Three.js**.
+Original sci-fi first-person test game built with HTML, CSS, JavaScript and Three.js.
 
-This is an original technical homage to classic science-fiction first-person games. Proprietary game assets are not included; geometry, UI, and audio are generated for this test build.
+This project is an original homage to classic science-fiction FPS design. It does not include proprietary Half-Life maps, models, textures, sounds or other game assets.
 
-## Included gameplay
-- First-person movement and mouse look
-- Desktop and mobile dual-stick controls
-- Health + suit armor
+## Gameplay
+- First-person keyboard/mouse movement
+- Mobile dual-stick controls
+- Health and suit armor
 - Two weapons with ammo and reload
-- Enemy AI and projectile attacks
+- Enemy chase and ranged attacks
 - Pickups
-- Multi-sector mini campaign
+- Multi-sector test campaign
 - Reactor resonance event
-- Door, objective, pause and extraction flow
-	- Procedural lighting, fut and materials
+- Objectives, pause, restart and extraction flow
+- Procedural geometry, lighting, fog and generated WebAudio cues
 
 ## Local development
-
-``bash
+```bash
 npm install
 npm run dev
 ```
 
-``bash
+Build:
+```bash
+npm run check
 npm run build
 ```
 
-The Android APK is built by GitHub Actions in `resonance-blacksite ap-i` .
+The Android debug APK is built automatically by GitHub Actions on pushes to `main` and is uploaded as the `resonance-blacksite-apk` artifact.
