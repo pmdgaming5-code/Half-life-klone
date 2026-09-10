@@ -6,8 +6,9 @@ let output='';
 vite.stdout.on('data',d=>output+=d.toString());
 vite.stderr.on('data',d=>output+=d.toString());
 
-const stop=()=>{try{vite.kill('SIGTERM')}catch{}};
-process.on('exit',stop);
+const stopVite=()=>{try{vite.kill('SIGTERM')}catch{}};
+process.on('exit',stopVite);
+let browser=null;
 
 try{
   await new Promise((resolve,reject)=>{
@@ -16,7 +17,7 @@ try{
     check();
   });
 
-  const browser=await chromium.launch({headless:true,args:['--use-gl=swiftshader','--disable-gpu-sandbox']});
+  browser=await chromium.launch({headless:true,args:['--use-gl=swiftshader','--disable-gpu-sandbox']});
   const page=await browser.newPage({viewport:{width:1280,height:720}});
   const errors=[];
   page.on('pageerror',e=>errors.push(e.message));
@@ -26,6 +27,8 @@ try{
   if(document.querySelector('#boot')) throw new Error('Boot screen still exists after startup.');
   if(errors.length) throw new Error(`Browser errors: ${errors.join(' | ')}`);
   await page.screenshot({path:'runtime-smoke.png'});
-  await browser.close();
   console.log('Runtime smoke test passed: boot completed and menu is visible.');
-}finally{stop();}
+}finally{
+  if(browser) await browser.close().catch(()=>{});
+  stopVite();
+}
